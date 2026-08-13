@@ -1,0 +1,35 @@
+name: Trade Covenant Ads CLI
+
+on:
+  workflow_dispatch:
+    inputs:
+      command:
+        description: >
+          Arguments to pass to `python -m meta_ads.cli`, e.g.
+          "validate", "campaigns list --status ACTIVE,PAUSED",
+          "insights account --date-preset last_7d"
+        required: true
+        default: "validate"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run command
+        env:
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          META_AD_ACCOUNT_ID: ${{ secrets.META_AD_ACCOUNT_ID }}
+          META_API_VERSION: ${{ vars.META_API_VERSION }}
+          # Passed as an env var (not interpolated into the shell script
+          # text) so arbitrary input strings can't break out of the command.
+          CLI_COMMAND: ${{ github.event.inputs.command }}
+        run: python -m meta_ads.cli $CLI_COMMAND

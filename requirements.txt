@@ -1,0 +1,4 @@
+requests>=2.31,<3
+click>=8.1,<9
+python-dotenv>=1.0,<2
+tabulate>=0.9,<1
