@@ -128,6 +128,45 @@ name (`targeting`, `creative`) without sub-selection returned the full
 nested object correctly. If a nested-field expansion comes back empty,
 retry with the bare field name before assuming the object has no data.
 
+## Ongoing frequency monitoring (n8n + a scheduled check-in)
+
+To watch frequency on running Hammer Them campaigns without re-deriving
+Marketing API calls each time: build a small n8n workflow (Manual Trigger
+→ HTTP Request per campaign hitting `/{campaign_id}/insights?level=adset&fields=adset_name,frequency,reach,impressions,spend&date_preset=last_3d`,
+using the stored Meta credential → a Code node that aggregates
+avg/min/max frequency and flags ad sets outside the 10–25 range) and
+invoke it on a schedule via `mcp__n8n__execute_workflow` (executionMode
+`manual`, which runs the current saved version regardless of whether the
+workflow itself is published/active — no need to activate it in n8n at
+all if the invocation is always external).
+
+Two gotchas hit while building this:
+- **`setNodeCredential` / `addNode` with `credentials` both failed** to
+  attach an `httpQueryAuth` generic-auth credential to an `httpRequest`
+  node via the n8n MCP server's `update_workflow` tool, even though the
+  exact same node type + credential type combination already works fine
+  when configured by hand in the n8n UI (and even after removing/re-adding
+  the node with credentials inlined). Treat this as a known gap in that
+  MCP tool for this credential type — don't burn time retrying it several
+  ways. The workaround is a one-time manual step: open the workflow in
+  the n8n UI and pick the credential from each HTTP Request node's
+  credential dropdown directly.
+- **A Claude Code Remote Routine (`create_trigger`) that self-binds to
+  the current session warned "this trigger stores no MCP connectors, so
+  the sessions it fires will run without connector tools."** In testing
+  this appeared to refer to claude.ai-style OAuth connectors (Gmail,
+  Slack-as-connector — the set `ListConnectors` returns), not
+  environment-configured MCP servers like n8n (which don't show up in
+  `ListConnectors` at all and are wired into the environment itself). A
+  self-bound Routine firing into the *same* session should still have
+  n8n available. Unconfirmed until a real firing is observed, though —
+  if a scheduled check-in comes back unable to reach n8n tools, that's
+  the thing to revisit, and the fallback is moving the schedule into n8n
+  itself (its own Schedule Trigger node) with delivery straight to Slack
+  instead of round-tripping through a Claude session at all — more
+  robust regardless, since it doesn't depend on any Claude session being
+  reachable.
+
 ## Content-reuse caveat
 
 Reusing an existing window's content pool to stand up a new window fast
