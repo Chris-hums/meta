@@ -70,6 +70,12 @@ Window-shape logic:
 3. **Quick questions** — answer directly from this file and the IF/THEN
    tables in the references; don't make the user read the whole framework
    for one number.
+4. **Building it programmatically via the Marketing API** (not just
+   walking a human through Ads Manager) — see
+   `references/marketing-api-build-notes.md` for confirmed request shapes
+   (Custom Audience rule JSON, ABO campaign creation, the 3-second
+   exclusion audience pattern) and the batch-endpoint approach for
+   creating many ad sets/ads at once without burning rate limit.
 
 Key inputs to get from the user before sizing anything:
 - Weekly registrant volume (drives campaign count and starting budget — see `references/campaign-setup.md` and `references/frequency-budget-timing.md`)
