@@ -54,7 +54,12 @@ Window-shape logic:
    (what content to produce and in what mix), and
    `references/frequency-budget-timing.md` (frequency targets, starting
    budget, scaling, and the free layers it must run alongside). Finish with
-   `references/execution-checklist.md`, in order.
+   `references/execution-checklist.md`, in order. If the Window 2 (call
+   booker) audience is or could be sourced from a server-side automation
+   (a booking webhook, CRM, or workflow tool) rather than a browser pixel
+   on a confirmation page, see `references/capi-server-side-integration.md`
+   — it's the stronger pattern and worth defaulting to over the pure
+   URL-based version in `campaign-setup.md`.
 2. **Diagnosing an existing campaign** — start from
    `references/troubleshooting-and-kpis.md`: the 11 "things to look out
    for" catch the most common ways this breaks silently (Audience Network

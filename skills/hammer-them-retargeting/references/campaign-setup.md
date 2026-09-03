@@ -47,6 +47,7 @@ budget instead.
 - Source: call-booking confirmation/thank-you page URL (Typeform, Calendly, etc.)
 - If booking happens inside the webinar platform with no separate URL → build the audience from a pixel event (Lead or CompleteRegistration) instead
 - Retention: 14 days default; 7 days if calls happen within 3 days of booking
+- **Stronger alternative: a server-side Conversions API (CAPI) event fired straight from the booking automation**, instead of relying on the Pixel loading on a confirmation page. See `capi-server-side-integration.md` for the pattern (SHA-256 hashed identity match, event filtering, what it does and doesn't give you) and a working n8n reference implementation.
 
 **Supplementary audiences (add to both windows):**
 - 25%+ video viewers of a front-end ad video
